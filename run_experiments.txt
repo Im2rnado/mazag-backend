@@ -1,0 +1,556 @@
+======================================================================
+               MAZAG RAG CONFIGURATION EXPERIMENTS
+======================================================================
+
+📋 Running 6 experiments...
+   • Relevant test queries: 5
+   • Control queries (off-topic): 3
+   • Knowledge documents: 12
+
+   Metrics tracked:
+   • Selectivity: Relevant vs Control similarity
+   • Retrieval Quality: % queries with ≥0.3 avg similarity
+   • Qualitative inspection: Top retrieved snippets
+
+
+[Experiment 1/6]
+
+======================================================================
+🔬 Experiment: Baseline
+======================================================================
+
+⚙️  Configuration:
+   • embedding_model: sentence-transformer
+   • chunking_strategy: sentence
+   • similarity_metric: cosine
+   • rag_top_k: 3
+   • analysis_method: lexicon
+
+✅ Engine initialized in 33.58s
+📚 Adding knowledge base...
+   • Total chunks: 12
+
+💬 Testing relevant queries...
+
+   Query 1: I'm feeling really anxious lately and I don't know why...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4198
+      ✓ Query time: 4.516s
+      📝 Top match: 'Anxiety disorders are characterized by excessive worry and fear Common symptoms ...'
+
+   Query 2: It feels like I'm going to have a panic attack...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4424
+      ✓ Query time: 1.311s
+      📝 Top match: 'Panic attacks are sudden episodes of intense fear that trigger severe physical  ...'
+
+   Query 3: I feel sad all the time and nothing interests me anymore...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.2816
+      ✓ Query time: 3.196s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 4: I always fail at everything and nothing ever goes right...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.1764
+      ✓ Query time: 1.410s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 5: How can I calm my racing thoughts and stay present?...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.3887
+      ✓ Query time: 3.663s
+      📝 Top match: 'Grounding techniques help individuals manage overwhelming emotions by focusing  ...'
+
+
+🎯 Testing control queries (should reject these)...
+
+   Control 1: What's the weather like today?...
+      ✓ Perfect - no chunks retrieved
+
+   Control 2: How do I bake a chocolate cake?...
+      Retrieved 3 chunks
+      Avg similarity: 0.0451
+      ✓ Good - low similarity as expected
+
+   Control 3: Tell me about quantum physics...
+      Retrieved 3 chunks
+      Avg similarity: 0.1186
+      ✓ Good - low similarity as expected
+
+📊 Results Summary:
+   Relevant Queries:
+   • Average similarity: 0.3418
+   • Max similarity: 0.5585
+   • Min similarity: 0.1325
+   • Retrieval quality: 60.0% (≥0.3 threshold)
+
+   Control Queries (off-topic):
+   • Average similarity: 0.0818 ✓
+
+   Performance:
+   • Selectivity: 0.2599 (higher = better)
+   • Average query time: 2.819s
+
+
+[Experiment 2/6]
+
+======================================================================
+🔬 Experiment: Fixed Chunking
+======================================================================
+
+⚙️  Configuration:
+   • embedding_model: sentence-transformer
+   • chunking_strategy: fixed
+   • similarity_metric: cosine
+   • rag_top_k: 3
+   • analysis_method: lexicon
+
+✅ Engine initialized in 3.67s
+📚 Adding knowledge base...
+   • Total chunks: 12
+
+💬 Testing relevant queries...
+
+   Query 1: I'm feeling really anxious lately and I don't know why...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4241
+      ✓ Query time: 2.373s
+      📝 Top match: 'Anxiety disorders are characterized by excessive worry and fear.     Common symp...'
+
+   Query 2: It feels like I'm going to have a panic attack...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4326
+      ✓ Query time: 1.598s
+      📝 Top match: 'Panic attacks are sudden episodes of intense fear that trigger severe physical  ...'
+
+   Query 3: I feel sad all the time and nothing interests me anymore...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.2976
+      ✓ Query time: 1.745s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 4: I always fail at everything and nothing ever goes right...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.1791
+      ✓ Query time: 2.287s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 5: How can I calm my racing thoughts and stay present?...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.3888
+      ✓ Query time: 3.255s
+      📝 Top match: 'Grounding techniques help individuals manage overwhelming emotions by focusing  ...'
+
+
+🎯 Testing control queries (should reject these)...
+
+   Control 1: What's the weather like today?...
+      ✓ Perfect - no chunks retrieved
+
+   Control 2: How do I bake a chocolate cake?...
+      Retrieved 3 chunks
+      Avg similarity: 0.0458
+      ✓ Good - low similarity as expected
+
+   Control 3: Tell me about quantum physics...
+      Retrieved 3 chunks
+      Avg similarity: 0.1036
+      ✓ Good - low similarity as expected
+
+📊 Results Summary:
+   Relevant Queries:
+   • Average similarity: 0.3444
+   • Max similarity: 0.5493
+   • Min similarity: 0.1473
+   • Retrieval quality: 60.0% (≥0.3 threshold)
+
+   Control Queries (off-topic):
+   • Average similarity: 0.0747 ✓
+
+   Performance:
+   • Selectivity: 0.2697 (higher = better)
+   • Average query time: 2.252s
+
+
+[Experiment 3/6]
+
+======================================================================
+🔬 Experiment: Semantic Chunking
+======================================================================
+
+⚙️  Configuration:
+   • embedding_model: sentence-transformer
+   • chunking_strategy: semantic
+   • similarity_metric: cosine
+   • rag_top_k: 3
+   • analysis_method: lexicon
+
+✅ Engine initialized in 3.14s
+📚 Adding knowledge base...
+   • Total chunks: 12
+
+💬 Testing relevant queries...
+
+   Query 1: I'm feeling really anxious lately and I don't know why...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4241
+      ✓ Query time: 2.323s
+      📝 Top match: 'Anxiety disorders are characterized by excessive worry and fear.     Common symp...'
+
+   Query 2: It feels like I'm going to have a panic attack...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4326
+      ✓ Query time: 1.987s
+      📝 Top match: 'Panic attacks are sudden episodes of intense fear that trigger severe physical  ...'
+
+   Query 3: I feel sad all the time and nothing interests me anymore...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.2976
+      ✓ Query time: 1.904s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 4: I always fail at everything and nothing ever goes right...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.1791
+      ✓ Query time: 2.261s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 5: How can I calm my racing thoughts and stay present?...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.3888
+      ✓ Query time: 2.067s
+      📝 Top match: 'Grounding techniques help individuals manage overwhelming emotions by focusing  ...'
+
+
+🎯 Testing control queries (should reject these)...
+
+   Control 1: What's the weather like today?...
+      ✓ Perfect - no chunks retrieved
+
+   Control 2: How do I bake a chocolate cake?...
+      Retrieved 3 chunks
+      Avg similarity: 0.0458
+      ✓ Good - low similarity as expected
+
+   Control 3: Tell me about quantum physics...
+      Retrieved 3 chunks
+      Avg similarity: 0.1036
+      ✓ Good - low similarity as expected
+
+📊 Results Summary:
+   Relevant Queries:
+   • Average similarity: 0.3444
+   • Max similarity: 0.5493
+   • Min similarity: 0.1473
+   • Retrieval quality: 60.0% (≥0.3 threshold)
+
+   Control Queries (off-topic):
+   • Average similarity: 0.0747 ✓
+
+   Performance:
+   • Selectivity: 0.2697 (higher = better)
+   • Average query time: 2.108s
+
+
+[Experiment 4/6]
+
+======================================================================
+🔬 Experiment: L2 Distance
+======================================================================
+
+⚙️  Configuration:
+   • embedding_model: sentence-transformer
+   • chunking_strategy: sentence
+   • similarity_metric: l2
+   • rag_top_k: 3
+   • analysis_method: lexicon
+
+✅ Engine initialized in 3.65s
+📚 Adding knowledge base...
+   • Total chunks: 12
+
+💬 Testing relevant queries...
+
+   Query 1: I'm feeling really anxious lately and I don't know why...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4646
+      ✓ Query time: 2.125s
+      📝 Top match: 'Anxiety disorders are characterized by excessive worry and fear Common symptoms ...'
+
+   Query 2: It feels like I'm going to have a panic attack...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4768
+      ✓ Query time: 2.273s
+      📝 Top match: 'Panic attacks are sudden episodes of intense fear that trigger severe physical  ...'
+
+   Query 3: I feel sad all the time and nothing interests me anymore...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4136
+      ✓ Query time: 2.476s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 4: I always fail at everything and nothing ever goes right...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.3780
+      ✓ Query time: 3.281s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 5: How can I calm my racing thoughts and stay present?...
+      ✓ Retrieved 3 chunks
+      ✓ Avg similarity: 0.4504
+      ✓ Query time: 1.845s
+      📝 Top match: 'Grounding techniques help individuals manage overwhelming emotions by focusing  ...'
+
+
+🎯 Testing control queries (should reject these)...
+
+   Control 1: What's the weather like today?...
+      ✓ Perfect - no chunks retrieved
+
+   Control 2: How do I bake a chocolate cake?...
+      Retrieved 3 chunks
+      Avg similarity: 0.3437
+      ✓ Good - low similarity as expected
+
+   Control 3: Tell me about quantum physics...
+      Retrieved 3 chunks
+      Avg similarity: 0.3620
+      ✓ Good - low similarity as expected
+
+📊 Results Summary:
+   Relevant Queries:
+   • Average similarity: 0.4367
+   • Max similarity: 0.5310
+   • Min similarity: 0.3656
+   • Retrieval quality: 100.0% (≥0.3 threshold)
+
+   Control Queries (off-topic):
+   • Average similarity: 0.3528 ✓
+
+   Performance:
+   • Selectivity: 0.0839 (higher = better)
+   • Average query time: 2.400s
+
+
+[Experiment 5/6]
+
+======================================================================
+🔬 Experiment: More Context (k=5)
+======================================================================
+
+⚙️  Configuration:
+   • embedding_model: sentence-transformer
+   • chunking_strategy: sentence
+   • similarity_metric: cosine
+   • rag_top_k: 5
+   • analysis_method: lexicon
+
+✅ Engine initialized in 3.62s
+📚 Adding knowledge base...
+   • Total chunks: 12
+
+💬 Testing relevant queries...
+
+   Query 1: I'm feeling really anxious lately and I don't know why...
+      ✓ Retrieved 5 chunks
+      ✓ Avg similarity: 0.3723
+      ✓ Query time: 3.183s
+      📝 Top match: 'Anxiety disorders are characterized by excessive worry and fear Common symptoms ...'
+
+   Query 2: It feels like I'm going to have a panic attack...
+      ✓ Retrieved 5 chunks
+      ✓ Avg similarity: 0.3624
+      ✓ Query time: 2.536s
+      📝 Top match: 'Panic attacks are sudden episodes of intense fear that trigger severe physical  ...'
+
+   Query 3: I feel sad all the time and nothing interests me anymore...
+      ✓ Retrieved 5 chunks
+      ✓ Avg similarity: 0.2484
+      ✓ Query time: 3.210s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 4: I always fail at everything and nothing ever goes right...
+      ✓ Retrieved 5 chunks
+      ✓ Avg similarity: 0.1573
+      ✓ Query time: 2.602s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 5: How can I calm my racing thoughts and stay present?...
+      ✓ Retrieved 5 chunks
+      ✓ Avg similarity: 0.3615
+      ✓ Query time: 2.101s
+      📝 Top match: 'Grounding techniques help individuals manage overwhelming emotions by focusing  ...'
+
+
+🎯 Testing control queries (should reject these)...
+
+   Control 1: What's the weather like today?...
+      ✓ Perfect - no chunks retrieved
+
+   Control 2: How do I bake a chocolate cake?...
+      Retrieved 5 chunks
+      Avg similarity: 0.0339
+      ✓ Good - low similarity as expected
+
+   Control 3: Tell me about quantum physics...
+      Retrieved 5 chunks
+      Avg similarity: 0.1052
+      ✓ Good - low similarity as expected
+
+📊 Results Summary:
+   Relevant Queries:
+   • Average similarity: 0.3004
+   • Max similarity: 0.5585
+   • Min similarity: 0.1267
+   • Retrieval quality: 60.0% (≥0.3 threshold)
+
+   Control Queries (off-topic):
+   • Average similarity: 0.0695 ✓
+
+   Performance:
+   • Selectivity: 0.2308 (higher = better)
+   • Average query time: 2.726s
+
+
+[Experiment 6/6]
+
+======================================================================
+🔬 Experiment: Less Context (k=1)
+======================================================================
+
+⚙️  Configuration:
+   • embedding_model: sentence-transformer
+   • chunking_strategy: sentence
+   • similarity_metric: cosine
+   • rag_top_k: 1
+   • analysis_method: lexicon
+
+✅ Engine initialized in 3.52s
+📚 Adding knowledge base...
+   • Total chunks: 12
+
+💬 Testing relevant queries...
+
+   Query 1: I'm feeling really anxious lately and I don't know why...
+      ✓ Retrieved 1 chunks
+      ✓ Avg similarity: 0.5117
+      ✓ Query time: 2.253s
+      📝 Top match: 'Anxiety disorders are characterized by excessive worry and fear Common symptoms ...'
+
+   Query 2: It feels like I'm going to have a panic attack...
+      ✓ Retrieved 1 chunks
+      ✓ Avg similarity: 0.5585
+      ✓ Query time: 2.018s
+      📝 Top match: 'Panic attacks are sudden episodes of intense fear that trigger severe physical  ...'
+
+   Query 3: I feel sad all the time and nothing interests me anymore...
+      ✓ Retrieved 1 chunks
+      ✓ Avg similarity: 0.4297
+      ✓ Query time: 2.112s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 4: I always fail at everything and nothing ever goes right...
+      ✓ Retrieved 1 chunks
+      ✓ Avg similarity: 0.2100
+      ✓ Query time: 1.976s
+      📝 Top match: 'Depression symptoms include persistent sadness, loss of interest in activities, ...'
+
+   Query 5: How can I calm my racing thoughts and stay present?...
+      ✓ Retrieved 1 chunks
+      ✓ Avg similarity: 0.4312
+      ✓ Query time: 3.844s
+      📝 Top match: 'Grounding techniques help individuals manage overwhelming emotions by focusing  ...'
+
+
+🎯 Testing control queries (should reject these)...
+
+   Control 1: What's the weather like today?...
+      ✓ Perfect - no chunks retrieved
+
+   Control 2: How do I bake a chocolate cake?...
+      Retrieved 1 chunks
+      Avg similarity: 0.0521
+      ✓ Good - low similarity as expected
+
+   Control 3: Tell me about quantum physics...
+      Retrieved 1 chunks
+      Avg similarity: 0.1240
+      ✓ Good - low similarity as expected
+
+📊 Results Summary:
+   Relevant Queries:
+   • Average similarity: 0.4282
+   • Max similarity: 0.5585
+   • Min similarity: 0.2100
+   • Retrieval quality: 80.0% (≥0.3 threshold)
+
+   Control Queries (off-topic):
+   • Average similarity: 0.0880 ✓
+
+   Performance:
+   • Selectivity: 0.3402 (higher = better)
+   • Average query time: 2.441s
+
+
+======================================================================
+📊 COMPARISON OF ALL EXPERIMENTS
+======================================================================
+
+Rank   Experiment           Selectivity   Quality    Avg Sim    Control    Time
+------------------------------------------------------------------------------------------
+1      Less Context (k=1)   0.3402        80.0 % ✓   0.4282     0.0880 ✓    2.441     s
+2      Fixed Chunking       0.2697        60.0 % ✓   0.3444     0.0747 ✓    2.252     s
+3      Semantic Chunking    0.2697        60.0 % ✓   0.3444     0.0747 ✓    2.108     s
+4      Baseline             0.2599        60.0 % ✓   0.3418     0.0818 ✓    2.819     s
+5      More Context (k=5)   0.2308        60.0 % ✓   0.3004     0.0695 ✓    2.726     s
+6      L2 Distance          0.0839        100.0% ✓   0.4367     0.3528 ✓    2.400     s
+
+======================================================================
+🏆 BEST CONFIGURATION
+======================================================================
+
+   Experiment: Less Context (k=1)
+
+   Settings:
+      • embedding_model: sentence-transformer
+      • chunking_strategy: sentence
+      • similarity_metric: cosine
+      • rag_top_k: 1
+      • analysis_method: lexicon
+
+   Performance:
+      • Selectivity: 0.3402 (difference: relevant vs control)
+      • Retrieval quality: 80.0% (queries with ≥0.3 similarity)
+      • Average similarity (relevant): 0.4282
+      • Average similarity (control): 0.0880
+      • Max similarity: 0.5585
+      • Average query time: 2.441s
+      • Total chunks: 12
+
+   📝 Sample Retrieval (Quality Check):
+      Query: I'm feeling really anxious lately and I don't know why...
+      Chunk 1: Anxiety disorders are characterized by excessive worry and fear Common symptoms include restlessness...
+
+======================================================================
+💡 RECOMMENDATIONS
+======================================================================
+
+   📊 Top chunking strategies: sentence, fixed, semantic
+   ✓ Best similarity metric: cosine
+   ✓ Recommended top-k: 2 chunks
+
+   ⭐ 2 configuration(s) achieved ≥80% retrieval quality
+   🎯 1 configuration(s) showed good selectivity (>0.3)
+
+   ⚡ Fastest configuration: Semantic Chunking (2.108s)
+      Trade-off: 0.0704 lower selectivity for speed
+
+   🎯 Control Query Performance:
+      • Best at rejecting off-topic: More Context (k=5)
+        (control similarity: 0.0695)
+
+
+======================================================================
+✅ ALL EXPERIMENTS COMPLETE!
+======================================================================

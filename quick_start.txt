@@ -1,0 +1,116 @@
+🚀 Initializing Mazag Engine...
+
+⚙️  Configuration:
+   • Embedding Model: sentence-transformer (all-MiniLM-L6-v2)
+   • Analysis Method: lexicon-based
+   • Chunking Strategy: sentence-based
+   • Similarity Metric: cosine
+   • RAG Top-K: 1 chunks
+
+✅ Engine initialized!
+
+📚 Adding knowledge base...
+   Processing 12 documents...
+
+   Document 1: 246 characters
+   └─ Split into 1 chunks
+   Document 2: 228 characters
+   └─ Split into 1 chunks
+   Document 3: 235 characters
+   └─ Split into 1 chunks
+   Document 4: 224 characters
+   └─ Split into 1 chunks
+   Document 5: 251 characters
+   └─ Split into 1 chunks
+   Document 6: 223 characters
+   └─ Split into 1 chunks
+   Document 7: 203 characters
+   └─ Split into 1 chunks
+   Document 8: 223 characters
+   └─ Split into 1 chunks
+   Document 9: 223 characters
+   └─ Split into 1 chunks
+   Document 10: 234 characters
+   └─ Split into 1 chunks
+   Document 11: 250 characters
+   └─ Split into 1 chunks
+   Document 12: 230 characters
+   └─ Split into 1 chunks
+
+✅ Knowledge base ready!
+   • Total chunks in vector store: 12
+   • Embedding dimension: 384
+   • Ready for semantic search
+
+💬 Example Conversation:
+
+============================================================
+
+👤 User: I'm feeling really anxious lately and I don't know why
+------------------------------------------------------------
+
+🔍 RAG Retrieval:
+   Retrieved 1 chunks from knowledge base
+
+   Chunk 1 (Score: 0.5117):
+   └─ Anxiety disorders are characterized by excessive worry and fear Common symptoms include restlessness...
+
+   📝 Total context length: 227 characters
+
+📊 Analysis:
+   • Sentiment: negative
+   • Tone: anxiety
+   • Risk Level: medium
+
+🤖 Mazag: I'm sorry to hear you're feeling anxious. Can you tell me a little more about when you notice this feeling most often?
+
+
+👤 User: It feels like I'm going to have a panic attack
+------------------------------------------------------------
+
+🔍 RAG Retrieval:
+   Retrieved 1 chunks from knowledge base
+
+   Chunk 1 (Score: 0.5585):
+   └─ Panic attacks are sudden episodes of intense fear that trigger severe physical         reactions suc...
+
+   📝 Total context length: 241 characters
+
+📊 Analysis:
+   • Sentiment: negative
+   • Tone: anxiety
+   • Risk Level: low
+
+🤖 Mazag: What sensations are you noticing in your body right now that make you feel a panic attack might be coming?
+
+
+👤 User: I'm having trouble sleeping too
+------------------------------------------------------------
+
+🔍 RAG Retrieval:
+   Retrieved 1 chunks from knowledge base
+
+   Chunk 1 (Score: 0.3263):
+   └─ Sleep hygiene refers to practices that improve sleep quality, such as maintaining         a regular ...
+
+   📝 Total context length: 213 characters
+
+📊 Analysis:
+   • Sentiment: neutral
+   • Tone: neutral
+   • Risk Level: low
+
+🤖 Mazag: Trouble sleeping can definitely make anxiety feel worse. What kind of difficulties are you having with your sleep?
+
+============================================================
+
+✅ Demo complete!
+
+📊 RAG Performance Summary:
+   • Total queries: 3
+   • Successful retrievals: 3
+   • Total chunks retrieved: 3
+   • Average chunks per query: 1.0
+   • Average similarity score: 0.4655
+   • Highest similarity score: 0.5585
+   • Lowest similarity score: 0.3263

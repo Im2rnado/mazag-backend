@@ -1,0 +1,19 @@
+# Mazag Backend Requirements
+
+# Core Dependencies
+openai>=1.0.0                    # OpenAI client (for Gemini API)
+numpy>=1.21.0                    # Numerical computations
+
+# RAG Components
+sentence-transformers>=2.2.0     # Local embedding models
+faiss-cpu>=1.7.4                # Vector similarity search (use faiss-gpu for GPU support)
+scikit-learn>=1.0.0             # TF-IDF and ML utilities
+
+# Optional: Enhanced Analysis
+# Uncomment if you want to use these features
+# transformers>=4.30.0          # Hugging Face transformers for advanced NLP
+# text2emotion>=0.0.5           # Text emotion detection
+# google-generativeai>=0.3.0    # For Gemini API embeddings
+
+# Development & Testing
+ipykernel>=6.0.0                # IPython kernel

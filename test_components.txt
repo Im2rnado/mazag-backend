@@ -1,0 +1,98 @@
+======================================================================
+                    MAZAG COMPONENT TESTS
+======================================================================
+
+============================================================
+Testing: Document Chunking
+============================================================
+
+✅ Created 4 chunks
+
+First chunk preview:
+   ID: chunk_0
+   Text: Cognitive Behavioral Therapy (CBT) is an effective treatment for anxiety and dep...
+   Length: 87 chars
+
+============================================================
+Testing: Text Embedding
+============================================================
+
+✅ Generated embeddings
+   Shape: (3, 384)
+   Dimension: 384
+   I feel anxious: [[ 0.06033192 -0.03948961  0.02021512  0.02657188  0.06728551]...]
+   I am depressed: [[0.00872086 0.04692127 0.00722359 0.05276145 0.02514054]...]
+   I need help: [[-0.01808587 -0.01844544 -0.12457293 -0.03121437 -0.00429483]...]
+
+============================================================
+Testing: Vector Store & Retrieval
+============================================================
+
+✅ Added 3 documents
+   First document: Anxiety causes worry and fear
+   First embedding: [0.08317591 0.0094128  0.00380724 0.11084144 0.09768712]...
+   Second document: Depression causes persistent sadness
+   Second embedding: [ 0.01377527  0.03368873 -0.00836025  0.1551802   0.03725785]...
+   Third document: Therapy helps with mental health
+   Third embedding: [ 0.02755954  0.04330482 -0.01163225  0.0417807  -0.01170331]...
+
+🔍 Query: 'I feel like I worry a lot'
+
+Results:
+   1. Score: 0.473 | Anxiety causes worry and fear
+   2. Score: 0.195 | Depression causes persistent sadness
+   3. Score: 0.099 | Therapy helps with mental health
+
+============================================================
+Testing: Guardrails System
+============================================================
+
+✅ Input: 'I'm feeling anxious'
+   Status: ✅ PASS
+
+✅ Input: 'Buy crypto now!'
+   Status: ❌ BLOCK
+   Reason: No harmful content detected. Out of scope ...
+
+✅ Input: 'I want to die'
+   Status: ❌ BLOCK
+   Reason: Critical red flag detected: suicide. Professional ...
+
+============================================================
+Testing: Sentiment Analysis
+============================================================
+
+💬 'I'm so happy and grateful!'
+   Sentiment: positive
+   Tone: joy
+   Risk: low
+
+💬 'I feel sad and hopeless'
+   Sentiment: negative
+   Tone: sadness
+   Risk: medium
+
+💬 'I'm worried about everything'
+   Sentiment: negative
+   Tone: anxiety
+   Risk: medium
+
+============================================================
+Testing: Therapist Recommendation
+============================================================
+
+👤 Patient: 'I have severe anxiety and panic attacks'
+
+🎯 Top Recommendations:
+
+   1. Dr. John Smith
+      Score: 1.60
+      Reasons: Specializes in: anxiety, panic
+
+   2. Dr. Ahmed Hassan
+      Score: 0.80
+      Reasons: Specializes in: anxiety
+
+   3. Dr. Sara Mohamed
+      Score: 0.00
+      Reasons: Available therapist
