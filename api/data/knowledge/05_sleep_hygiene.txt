@@ -1,0 +1,83 @@
+# Sleep Hygiene and Insomnia Management
+
+## Why Sleep Matters for Mental Health
+Sleep and mental health are bidirectionally linked:
+- Poor sleep worsens depression, anxiety, and irritability
+- Depression and anxiety disrupt sleep
+- 1 in 3 people with insomnia develops depression if untreated
+- During deep sleep, the brain clears out toxins and consolidates emotional memories
+
+## Sleep Architecture
+A healthy night has 4–6 sleep cycles (~90 minutes each):
+- **N1**: Light sleep, transition
+- **N2**: Real sleep, heart rate slows, body temperature drops
+- **N3 (Deep sleep)**: Physical restoration, immune function, memory consolidation
+- **REM**: Emotional processing, dream sleep, creativity
+
+Alcohol and late eating suppress N3 and REM — meaning you can sleep 8 hours and still feel unrestored.
+
+## Common Causes of Sleep Problems
+- Stress and worry (racing thoughts in bed)
+- Irregular sleep schedule (different times on weekends)
+- Excessive blue light from screens
+- Caffeine after noon
+- Physical discomfort: pain, temperature
+- Alcohol (disrupts sleep architecture)
+- Napping more than 20 minutes during the day
+- Anxiety about sleep itself (sleep anxiety)
+
+## Evidence-Based Sleep Strategies
+
+### Stimulus Control (Most Effective Single Technique)
+Train your brain to associate bed with sleep only:
+- Use your bed ONLY for sleep (and sex). No phone, TV, eating, or working in bed.
+- If you can't sleep after 20 minutes, get up and do something calm in dim light until sleepy.
+- Return to bed only when actually sleepy.
+- Repeat as needed — avoid lying awake in bed.
+
+### Sleep Restriction (CBT-I)
+Paradoxically, spending less time in bed builds sleep pressure and improves sleep quality:
+- Calculate average actual sleep time (e.g., 5 hours)
+- Go to bed 5 hours before wake time for 1 week
+- Gradually extend by 15 minutes when sleep efficiency improves above 85%
+
+### Sleep Hygiene Basics
+- **Consistent schedule**: Same bedtime AND wake time 7 days a week — even weekends
+- **Light exposure**: Bright sunlight within 1 hour of waking (regulates circadian rhythm)
+- **No screens**: 30–60 minutes before bed. Blue light suppresses melatonin by up to 3 hours.
+- **Cool room**: 18–20°C (65–68°F) is optimal. Body needs to cool to enter sleep.
+- **No caffeine after noon**: Caffeine half-life is 5–7 hours. A 2pm coffee still has half its caffeine at 9pm.
+- **No alcohol**: Alcohol helps you fall asleep but fragments sleep badly in the second half.
+- **Exercise**: Regular exercise improves sleep quality — but avoid vigorous exercise 2 hours before bed.
+
+### Wind-Down Routine (60 minutes before bed)
+1. Dim all lights in your home
+2. Finish eating at least 2–3 hours before bed
+3. Gentle stretch or progressive muscle relaxation
+4. Write tomorrow's 3 priorities and a gratitude list (offloads mental churn)
+5. Read fiction or do a calm activity (crosswords, light conversation)
+6. In bed: 4-7-8 breathing until drowsy
+
+### Managing Racing Thoughts at Night
+- **Worry journal**: Write worries before bed. Your brain stops rehearsing them.
+- **Scheduled worry time**: 15 minutes earlier in the evening to write worries, not in bed.
+- **Cognitive defusion**: "I'm having the thought that X" — distance yourself from the thought.
+- **Body scan**: Move attention systematically through the body (see exercise guide).
+
+### Napping Rules
+- If you must nap: maximum 20 minutes, before 3pm
+- Short naps restore alertness without disrupting night sleep
+- Long naps (60–90 min) reduce sleep pressure and worsen nighttime sleep
+
+## Sleep Myths
+- "I can catch up on sleep over the weekend" — FALSE. Sleep debt isn't fully recovered, and irregular schedules harm circadian rhythm.
+- "Alcohol helps me sleep" — FALSE. It helps you fall asleep but dramatically worsens sleep quality.
+- "Watching TV helps me wind down" — FALSE. Screens increase alertness. Netflix is specifically engineered to keep you watching.
+- "I only need 5 hours" — FALSE for almost everyone. Only 1–3% of people have the genetic mutation for this.
+
+## When to Seek Professional Help
+- Insomnia lasting more than 3 months
+- Daytime functioning significantly impaired
+- Suspected sleep apnea (loud snoring, gasping, partner reports you stop breathing)
+- Restless legs, sleepwalking, or sleep paralysis
+- Sleep problems combined with depression or anxiety

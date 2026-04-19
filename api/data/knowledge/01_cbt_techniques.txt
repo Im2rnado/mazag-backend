@@ -1,0 +1,88 @@
+# Cognitive Behavioral Therapy (CBT) Techniques for Mental Health
+
+## What is CBT?
+Cognitive Behavioral Therapy (CBT) is one of the most evidence-based psychological treatments. It's based on the idea that our thoughts, feelings, and behaviors are all connected — and that changing unhelpful thought patterns can improve how we feel and act.
+
+## Core Principle: The CBT Triangle
+- **Thoughts** → shape how we feel
+- **Feelings** → influence our behavior
+- **Behaviors** → reinforce our thoughts
+
+Breaking any one side of this triangle can break a negative cycle.
+
+## Common Cognitive Distortions
+
+**All-or-Nothing Thinking**: "If I'm not perfect, I'm a total failure."
+Challenge: Look for the middle ground. Most situations exist on a spectrum.
+
+**Catastrophizing**: "This headache means I have a brain tumor."
+Challenge: Ask what the most likely explanation is. Rate the actual probability.
+
+**Mind Reading**: "She didn't reply because she hates me."
+Challenge: Are there other explanations? Have you checked with the person?
+
+**Fortune Telling**: "I know the presentation will go badly."
+Challenge: Have you predicted badly before? What evidence do you have?
+
+**Overgeneralization**: "I always fail at relationships."
+Challenge: Always? Never? Find one exception.
+
+**Personalization**: "The team failed because of me."
+Challenge: What were the other contributing factors?
+
+**Emotional Reasoning**: "I feel stupid, therefore I am stupid."
+Challenge: Feelings are not facts. What would you say to a friend who felt this way?
+
+**Should Statements**: "I should be able to handle this."
+Challenge: Replace 'should' with 'it would be nice if.' Remove self-punishment.
+
+**Disqualifying the Positive**: "They only complimented me to be nice."
+Challenge: Why is the negative interpretation more true than the positive one?
+
+## Practical CBT Techniques
+
+### Thought Record
+1. Write down the situation
+2. Identify the automatic thought (the first thing that came to mind)
+3. Rate belief in that thought (0–100%)
+4. List evidence FOR the thought
+5. List evidence AGAINST the thought
+6. Write a more balanced, alternative thought
+7. Re-rate emotion and belief in original thought
+
+### Behavioral Activation
+When depressed, we often withdraw from activities that bring joy. This worsens depression.
+- Schedule one small, pleasant activity per day
+- Track your mood before and after
+- Gradually increase activities over time
+- The action comes BEFORE motivation, not after
+
+### Behavioral Experiment
+- Identify a feared prediction ("If I speak up, everyone will laugh")
+- Design a small experiment to test it
+- Carry out the experiment
+- Record what actually happened
+- Draw a conclusion: was your prediction accurate?
+
+### Socratic Questioning
+A guided questioning technique to examine the evidence for and against a belief:
+- "What is the evidence for this thought?"
+- "What would you say to a friend in the same situation?"
+- "What is the realistic worst-case scenario? Could you handle that?"
+- "What is the most helpful way of thinking about this?"
+
+### Graded Exposure
+For anxiety and avoidance: create a fear ladder from least scary to most scary, then face each step.
+- Start with the easiest step
+- Stay in the situation until anxiety reduces on its own (don't escape)
+- Repeat until that step feels manageable, then move up
+
+## When CBT Helps Most
+- Depression and low mood
+- Anxiety disorders (GAD, social anxiety, OCD, phobias)
+- Panic disorder
+- PTSD
+- Low self-esteem
+- Anger management
+- Eating disorders
+- Insomnia

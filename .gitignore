@@ -12,6 +12,11 @@ build/
 develop-eggs/
 dist/
 downloads/
+venv/
+mongodb/
+mongodb-data/
+mongodb-macos-aarch64-8.0.5/
+*.tgz
 eggs/
 .eggs/
 lib/
