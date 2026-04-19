@@ -269,8 +269,13 @@ async def load_history(session_id: str, db) -> List[Dict[str, str]]:
     cursor = db["messages"].find(
         {"session_id": session_id},
         {"_id": 0, "role": 1, "content": 1}
-    ).sort("created_at", 1).limit(20)
+    ).sort("created_at", -1).limit(20)
     messages = await cursor.to_list(length=20)
+    
+    # We retrieve newest first to not lose recent context, 
+    # but OpenAI requires chronological order (oldest to newest)
+    messages.reverse()
+    
     return messages
 
 
