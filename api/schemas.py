@@ -71,6 +71,7 @@ class ChatMessageResponse(BaseModel):
     session_id: str
     analysis: Optional[dict] = None
     guardrail_triggered: bool = False
+    therapists: Optional[List[Any]] = None
 
 
 class MessageRecord(BaseModel):

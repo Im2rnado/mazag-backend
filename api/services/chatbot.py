@@ -7,15 +7,19 @@ Handles:
   - Input/output guardrails
   - Sentiment/risk analysis
   - Conversation history stored in MongoDB
+  - Tool calling for therapist recommendations
 """
 
 import re
+import json
 import logging
-from typing import Optional, AsyncIterator, List, Dict
+from typing import Optional, AsyncIterator, List, Dict, Any, Union
 from datetime import datetime, timezone
 
 from openai import AsyncOpenAI
+from transformers import pipeline
 from api.config import get_settings
+from api.services import therapists
 
 logger = logging.getLogger(__name__)
 
@@ -55,16 +59,7 @@ MAZAG_SYSTEM_PROMPT = """# Mazag — System Prompt
 ## Response Length & Format
 * **Default:** 1–2 sentences (concise).
 * **Preferred structure:** 1 clarifying question OR 1 simple suggestion + 1 follow-up question.
-* Example minimal replies:
-  * User: "I don't like my job." → Mazag: "Why don't you like your job?"
-  * User: "I feel anxious before exams." → Mazag: "What thought worries you most before an exam?"
-
-## Therapeutic Approach
-* **Primary orientation:** CBT-informed (identify & challenge cognitive distortions; behavioral experiments; Socratic questioning).
-* **When to use:** Offer CBT techniques tailored to the user's context.
-* **Do not use** heavy clinical diagnostic labels casually.
 """
-
 
 # ── Guardrails ────────────────────────────────────────────────────────────────
 
@@ -101,6 +96,31 @@ OFF_TOPIC_RESPONSE = (
     "How are you feeling right now? I'm here to listen."
 )
 
+THERAPIST_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "find_therapists",
+        "description": "Search for therapists based on user criteria like location, max price, or specialization. Call this tool WHENEVER the user asks for a therapist recommendation or asks to find a therapist.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City or neighborhood (e.g., 'Dokki', 'Maadi')."
+                },
+                "max_price": {
+                    "type": "integer",
+                    "description": "Maximum session price in EGP."
+                },
+                "keyword": {
+                    "type": "string",
+                    "description": "Keyword related to specialization or issue (e.g., 'addiction', 'CBT', 'family')."
+                }
+            }
+        }
+    }
+}
+
 
 def _check_crisis(text: str) -> bool:
     t = text.lower()
@@ -116,13 +136,29 @@ def _check_output(text: str) -> bool:
     return any(re.search(p, text) for p in FORBIDDEN_OUTPUT_PATTERNS)
 
 
-def _analyze_sentiment(text: str) -> dict:
-    """
-    Lightweight lexicon-based sentiment/risk analysis.
-    Returns a dict suitable for the API response 'analysis' field.
-    """
-    t = text.lower()
+_emotion_classifier = None
 
+def _get_emotion_classifier():
+    global _emotion_classifier
+    if _emotion_classifier is None:
+        try:
+            logger.info("Loading transformer emotion model...")
+            # We use j-hartmann's emotion model which predicts 7 emotions
+            _emotion_classifier = pipeline(
+                "text-classification", 
+                model="j-hartmann/emotion-english-distilroberta-base",
+                top_k=None
+            )
+            logger.info("Transformer emotion model loaded successfully.")
+        except Exception as e:
+            logger.error(f"Failed to load transformer model: {e}")
+            _emotion_classifier = "failed"
+    return _emotion_classifier
+
+def _analyze_sentiment(text: str) -> dict:
+    t = text.lower()
+    
+    # 1. Base keyword scoring (acts as a robust fallback and supports Arabic)
     emotions = {
         "anxiety": ["worried", "anxious", "nervous", "scared", "panic", "stress", "قلق", "خائف", "توتر"],
         "sadness": ["sad", "depressed", "lonely", "hopeless", "empty", "حزين", "يائس", "وحيد"],
@@ -130,17 +166,48 @@ def _analyze_sentiment(text: str) -> dict:
         "joy": ["happy", "glad", "excited", "grateful", "content", "سعيد", "ممتن"],
     }
 
-    scores: Dict[str, float] = {}
+    scores: Dict[str, float] = {k: 0.0 for k in emotions.keys()}
     for emotion, keywords in emotions.items():
         count = sum(1 for kw in keywords if kw in t)
         scores[emotion] = round(count / max(len(keywords), 1), 3)
 
-    dominant = max(scores, key=scores.get)
+    # 2. Advanced Transformer scoring (English)
+    classifier = _get_emotion_classifier()
+    if classifier and classifier != "failed":
+        try:
+            # Safely truncate text to avoid max length issues (512 tokens)
+            safe_text = text[:1500] 
+            hf_results = classifier(safe_text)[0]
+            
+            for res in hf_results:
+                label = res['label']
+                score = res['score']
+                
+                # Map model labels to our unified schema
+                if label == 'joy':
+                    scores['joy'] += score
+                elif label == 'sadness':
+                    scores['sadness'] += score
+                elif label == 'anger' or label == 'disgust':
+                    scores['anger'] += score
+                elif label == 'fear':
+                    scores['anxiety'] += score
+            
+            # Normalize to 0-1 range
+            max_score = max(scores.values()) if max(scores.values()) > 0 else 1
+            scores = {k: round(v / max_score, 3) for k, v in scores.items()}
+            
+        except Exception as e:
+            logger.error(f"Transformer inference error: {e}")
+
+    dominant = max(scores, key=scores.get) if max(scores.values()) > 0 else "neutral"
+    
+    # Calculate overall sentiment polarity
     positive = scores.get("joy", 0)
-    negative = sum(v for k, v in scores.items() if k != "joy")
+    negative = scores.get("sadness", 0) + scores.get("anger", 0) + scores.get("anxiety", 0)
 
     sentiment = "positive" if positive > negative else "negative" if negative > positive else "neutral"
-    risk_level = "high" if _check_crisis(text) else "medium" if negative > 0.1 else "low"
+    risk_level = "high" if _check_crisis(text) else "medium" if negative > 0.5 else "low"
 
     return {
         "sentiment": sentiment,
@@ -149,8 +216,6 @@ def _analyze_sentiment(text: str) -> dict:
         "risk_level": risk_level,
     }
 
-
-# ── OpenRouter client ─────────────────────────────────────────────────────────
 
 def _get_client() -> AsyncOpenAI:
     settings = get_settings()
@@ -164,28 +229,24 @@ def _get_client() -> AsyncOpenAI:
     )
 
 
-# ── Main service functions ────────────────────────────────────────────────────
-
 async def generate_response(
     message: str,
     history: List[Dict[str, str]],
     context: Optional[str] = None,
-) -> tuple[str, dict]:
+) -> tuple[str, dict, List[Dict[str, Any]]]:
     """
     Generate a non-streaming chat response.
-    Returns (response_text, analysis_dict).
+    Returns (response_text, analysis_dict, recommended_therapists_list).
     """
     settings = get_settings()
 
-    # Guardrails — input
     if _check_crisis(message):
-        return CRISIS_RESPONSE, {"risk_level": "high", "guardrail": "crisis"}
+        return CRISIS_RESPONSE, {"risk_level": "high", "guardrail": "crisis"}, []
     if _check_off_topic(message):
-        return OFF_TOPIC_RESPONSE, {"risk_level": "low", "guardrail": "off_topic"}
+        return OFF_TOPIC_RESPONSE, {"risk_level": "low", "guardrail": "off_topic"}, []
 
     analysis = _analyze_sentiment(message)
 
-    # Build system message with optional RAG context
     system_content = MAZAG_SYSTEM_PROMPT
     if context:
         system_content += f"\n\n## Relevant Knowledge\n{context}"
@@ -195,36 +256,71 @@ async def generate_response(
     messages.append({"role": "user", "content": message})
 
     client = _get_client()
+    
+    # 1. First API call (with tools)
     resp = await client.chat.completions.create(
         model=settings.llm_model,
         messages=messages,
         temperature=settings.llm_temperature,
         max_tokens=settings.llm_max_tokens,
+        tools=[THERAPIST_TOOL],
+        tool_choice="auto"
     )
-    text = resp.choices[0].message.content or ""
+    
+    response_msg = resp.choices[0].message
+    recommended_therapists = []
+    
+    # 2. Check for tool calls
+    if response_msg.tool_calls:
+        # Append the assistant's tool call request to messages
+        messages.append(response_msg.model_dump())
+        
+        for tool_call in response_msg.tool_calls:
+            if tool_call.function.name == "find_therapists":
+                args = json.loads(tool_call.function.arguments)
+                found = therapists.search_therapists(
+                    location=args.get("location"),
+                    max_price=args.get("max_price"),
+                    keyword=args.get("keyword")
+                )
+                recommended_therapists = found
+                
+                # Append tool result to messages
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "content": json.dumps([{"id": t["id"], "name": t["name"], "price": t["price"], "location": t["location"]} for t in found])
+                })
+                
+        # 3. Second API call to formulate the final answer based on tool output
+        resp = await client.chat.completions.create(
+            model=settings.llm_model,
+            messages=messages,
+            temperature=settings.llm_temperature,
+            max_tokens=settings.llm_max_tokens,
+        )
+        text = resp.choices[0].message.content or ""
+    else:
+        text = response_msg.content or ""
 
-    # Automatically strip inner-monologue `<think>...</think>` tags generated by reasoning models
     text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
 
-    # Guardrails — output
     if _check_output(text):
         text = "أنا هنا للاستماع. هل يمكنك إخباري أكثر عما تشعر به؟\n\nI'm here to listen. Can you tell me more about what you're feeling?"
 
-    return text, analysis
+    return text, analysis, recommended_therapists
 
 
 async def stream_response(
     message: str,
     history: List[Dict[str, str]],
     context: Optional[str] = None,
-) -> AsyncIterator[str]:
+) -> AsyncIterator[Union[str, dict]]:
     """
-    Yield response tokens one-by-one (SSE streaming).
-    Yields text fragments, not full SSE lines — the router handles SSE formatting.
+    Yields either text chunks (str) or a dictionary {"therapists": [...]}.
     """
     settings = get_settings()
 
-    # Guardrails — input (yield the full response immediately)
     if _check_crisis(message):
         yield CRISIS_RESPONSE
         return
@@ -241,23 +337,100 @@ async def stream_response(
     messages.append({"role": "user", "content": message})
 
     client = _get_client()
+    
+    # 1. Initiate stream with tools
     stream = await client.chat.completions.create(
         model=settings.llm_model,
         messages=messages,
         temperature=settings.llm_temperature,
         max_tokens=settings.llm_max_tokens,
+        tools=[THERAPIST_TOOL],
+        tool_choice="auto",
         stream=True,
     )
 
+    tool_calls = []
     full_text = ""
+    
+    # 2. Process first stream (might be text, might be a tool call)
     async for chunk in stream:
-        token = chunk.choices[0].delta.content
-        if token:
+        delta = chunk.choices[0].delta
+        
+        # Accumulate tool calls if present
+        if delta.tool_calls:
+            for tool_call in delta.tool_calls:
+                # Initialize new tool call in our tracker if needed
+                while len(tool_calls) <= tool_call.index:
+                    tool_calls.append({"id": "", "function": {"name": "", "arguments": ""}})
+                
+                # Append data to the active tool call
+                tc = tool_calls[tool_call.index]
+                if tool_call.id: tc["id"] += tool_call.id
+                if tool_call.function.name: tc["function"]["name"] += tool_call.function.name
+                if tool_call.function.arguments: tc["function"]["arguments"] += tool_call.function.arguments
+        
+        # If it's normal text, yield it
+        elif delta.content:
+            token = delta.content
             full_text += token
             yield token
 
-    # Post-output guardrail — if bad output, we can't "un-stream" it,
-    # but we log it for monitoring
+    # 3. If a tool call was detected and fully streamed, execute it
+    if tool_calls:
+        # Reconstruct the assistant's tool_call message for context
+        assistant_msg = {
+            "role": "assistant", 
+            "content": None, 
+            "tool_calls": [
+                {
+                    "id": tc["id"], 
+                    "type": "function", 
+                    "function": {"name": tc["function"]["name"], "arguments": tc["function"]["arguments"]}
+                } for tc in tool_calls
+            ]
+        }
+        messages.append(assistant_msg)
+        
+        recommended_therapists = []
+        for tc in tool_calls:
+            if tc["function"]["name"] == "find_therapists":
+                try:
+                    args = json.loads(tc["function"]["arguments"])
+                except json.JSONDecodeError:
+                    args = {}
+                    
+                found = therapists.search_therapists(
+                    location=args.get("location"),
+                    max_price=args.get("max_price"),
+                    keyword=args.get("keyword")
+                )
+                recommended_therapists.extend(found)
+                
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc["id"],
+                    "content": json.dumps([{"id": t["id"], "name": t["name"], "price": t["price"], "location": t["location"]} for t in found])
+                })
+                
+        # Yield the structured data event so the frontend can show the cards
+        if recommended_therapists:
+            yield {"therapists": recommended_therapists}
+            
+        # 4. Stream the second LLM response based on tool execution
+        second_stream = await client.chat.completions.create(
+            model=settings.llm_model,
+            messages=messages,
+            temperature=settings.llm_temperature,
+            max_tokens=settings.llm_max_tokens,
+            stream=True,
+        )
+        
+        async for chunk in second_stream:
+            token = chunk.choices[0].delta.content
+            if token:
+                full_text += token
+                yield token
+
     if _check_output(full_text):
         logger.warning("⚠️  Output guardrail triggered on streamed response")
 
@@ -265,25 +438,16 @@ async def stream_response(
 # ── Conversation history helpers (MongoDB) ────────────────────────────────────
 
 async def load_history(session_id: str, db) -> List[Dict[str, str]]:
-    """
-    Load the last 20 messages for a session from MongoDB,
-    formatted as [{"role": ..., "content": ...}].
-    """
     cursor = db["messages"].find(
         {"session_id": session_id},
         {"_id": 0, "role": 1, "content": 1}
     ).sort("created_at", -1).limit(20)
     messages = await cursor.to_list(length=20)
-    
-    # We retrieve newest first to not lose recent context, 
-    # but OpenAI requires chronological order (oldest to newest)
     messages.reverse()
-    
     return messages
 
 
 async def save_message(session_id: str, role: str, content: str, db) -> None:
-    """Persist a single message to MongoDB."""
     await db["messages"].insert_one({
         "session_id": session_id,
         "role": role,

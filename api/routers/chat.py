@@ -36,7 +36,7 @@ async def send_message(body: ChatMessageRequest):
     context = knowledge.retrieve_context(body.message, top_k=settings.rag_top_k)
 
     # Generate response
-    response_text, analysis = await chatbot.generate_response(
+    response_text, analysis, therapists = await chatbot.generate_response(
         message=body.message,
         history=history,
         context=context,
@@ -53,6 +53,7 @@ async def send_message(body: ChatMessageRequest):
         session_id=body.session_id,
         analysis=analysis,
         guardrail_triggered=guardrail_triggered,
+        therapists=therapists,
     )
 
 
@@ -87,6 +88,11 @@ async def stream_message(body: ChatMessageRequest):
                 history=history,
                 context=context,
             ):
+                if isinstance(token, dict) and "therapists" in token:
+                    payload = json.dumps(token)
+                    yield f"data: {payload}\n\n"
+                    continue
+                    
                 accumulated_response.append(token)
                 # SSE format: "data: <payload>\n\n"
                 payload = json.dumps({"token": token})
