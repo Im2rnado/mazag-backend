@@ -17,7 +17,7 @@ from typing import Optional, AsyncIterator, List, Dict, Any, Union
 from datetime import datetime, timezone
 
 from openai import AsyncOpenAI
-from transformers import pipeline
+# from transformers import pipeline
 from api.config import get_settings
 from api.services import therapists
 
@@ -136,24 +136,24 @@ def _check_output(text: str) -> bool:
     return any(re.search(p, text) for p in FORBIDDEN_OUTPUT_PATTERNS)
 
 
-_emotion_classifier = None
+# _emotion_classifier = None
 
-def _get_emotion_classifier():
-    global _emotion_classifier
-    if _emotion_classifier is None:
-        try:
-            logger.info("Loading transformer emotion model...")
-            # We use j-hartmann's emotion model which predicts 7 emotions
-            _emotion_classifier = pipeline(
-                "text-classification", 
-                model="j-hartmann/emotion-english-distilroberta-base",
-                top_k=None
-            )
-            logger.info("Transformer emotion model loaded successfully.")
-        except Exception as e:
-            logger.error(f"Failed to load transformer model: {e}")
-            _emotion_classifier = "failed"
-    return _emotion_classifier
+# def _get_emotion_classifier():
+#     global _emotion_classifier
+#     if _emotion_classifier is None:
+#         try:
+#             logger.info("Loading transformer emotion model...")
+#             # We use j-hartmann's emotion model which predicts 7 emotions
+#             _emotion_classifier = pipeline(
+#                 "text-classification", 
+#                 model="j-hartmann/emotion-english-distilroberta-base",
+#                 top_k=None
+#             )
+#             logger.info("Transformer emotion model loaded successfully.")
+#         except Exception as e:
+#             logger.error(f"Failed to load transformer model: {e}")
+#             _emotion_classifier = "failed"
+#     return _emotion_classifier
 
 def _analyze_sentiment(text: str) -> dict:
     t = text.lower()
@@ -172,33 +172,33 @@ def _analyze_sentiment(text: str) -> dict:
         scores[emotion] = round(count / max(len(keywords), 1), 3)
 
     # 2. Advanced Transformer scoring (English)
-    classifier = _get_emotion_classifier()
-    if classifier and classifier != "failed":
-        try:
-            # Safely truncate text to avoid max length issues (512 tokens)
-            safe_text = text[:1500] 
-            hf_results = classifier(safe_text)[0]
-            
-            for res in hf_results:
-                label = res['label']
-                score = res['score']
-                
-                # Map model labels to our unified schema
-                if label == 'joy':
-                    scores['joy'] += score
-                elif label == 'sadness':
-                    scores['sadness'] += score
-                elif label == 'anger' or label == 'disgust':
-                    scores['anger'] += score
-                elif label == 'fear':
-                    scores['anxiety'] += score
-            
-            # Normalize to 0-1 range
-            max_score = max(scores.values()) if max(scores.values()) > 0 else 1
-            scores = {k: round(v / max_score, 3) for k, v in scores.items()}
-            
-        except Exception as e:
-            logger.error(f"Transformer inference error: {e}")
+    # classifier = _get_emotion_classifier()
+    # if classifier and classifier != "failed":
+    #     try:
+    #         # Safely truncate text to avoid max length issues (512 tokens)
+    #         safe_text = text[:1500] 
+    #         hf_results = classifier(safe_text)[0]
+    #         
+    #         for res in hf_results:
+    #             label = res['label']
+    #             score = res['score']
+    #             
+    #             # Map model labels to our unified schema
+    #             if label == 'joy':
+    #                 scores['joy'] += score
+    #             elif label == 'sadness':
+    #                 scores['sadness'] += score
+    #             elif label == 'anger' or label == 'disgust':
+    #                 scores['anger'] += score
+    #             elif label == 'fear':
+    #                 scores['anxiety'] += score
+    #         
+    #         # Normalize to 0-1 range
+    #         max_score = max(scores.values()) if max(scores.values()) > 0 else 1
+    #         scores = {k: round(v / max_score, 3) for k, v in scores.items()}
+    #         
+    #     except Exception as e:
+    #         logger.error(f"Transformer inference error: {e}")
 
     dominant = max(scores, key=scores.get) if max(scores.values()) > 0 else "neutral"
     

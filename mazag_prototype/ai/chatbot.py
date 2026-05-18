@@ -9,7 +9,7 @@ import openai
 
 class MazagChatbot:
     """
-    Main chatbot class using Gemini 2.5 Flash via OpenAI compatibility.
+    Main chatbot class using openai/gpt-oss-120b via OpenAI compatibility.
     """
     
     def __init__(

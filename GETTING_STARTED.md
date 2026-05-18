@@ -5,7 +5,7 @@
 Mazag is a comprehensive mental health chatbot backend that combines:
 - **RAG** (Retrieval-Augmented Generation) for context-aware responses
 - **Guardrails** for safety and ethical AI behavior  
-- **Gemini 2.5 Flash** for conversational intelligence
+- **openai/gpt-oss-120b** for conversational intelligence
 - **Sentiment Analysis** for understanding user emotional state
 - **Therapist Matching** using advanced similarity algorithms
 

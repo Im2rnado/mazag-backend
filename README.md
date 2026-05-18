@@ -17,7 +17,7 @@ A comprehensive AI-powered mental health companion backend with **RAG (Retrieval
 - **Medical Advice Prevention**: Prevents inappropriate diagnosis/prescription
 
 ### 3. **AI Chatbot**
-- **Gemini 2.5 Flash Integration**: Using OpenAI-compatible API
+- **openai/gpt-oss-120b Integration**: Using OpenAI-compatible API
 - **Mazag Persona**: Warm, empathetic, inquisitive mental health companion
 - **CBT-Informed**: Includes cognitive behavioral therapy knowledge
 - **Conversation Management**: Maintains context across sessions
@@ -247,7 +247,7 @@ recommendations = engine.get_therapist_recommendations(
 
 ## Production Deployment (Next Steps)
 
-1. **Scale Vector Store**: Use production database like Pinecone
+1. **Scale Vector Store**: Use production database like FAISS
 
 2. **Deploy as API**: FastAPI backend
    ```python
